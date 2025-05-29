@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from pydantic import BaseModel, Field
 
 
@@ -13,6 +15,8 @@ class StoryCondition(BaseModel):
 
 
 class Story(BaseModel):
+    STORY_LIMIT: ClassVar[int] = 250
+
     scenario_id: str
     student: Student
     condition: StoryCondition
@@ -21,4 +25,3 @@ class Story(BaseModel):
 
     characters: list[str] = Field(default_factory=list)
     key_events: list[str] = Field(default_factory=list)
-    STORY_LIMIT: int = 250

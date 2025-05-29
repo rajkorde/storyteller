@@ -19,4 +19,4 @@ def serialize(obj: BaseModel, file_path: str) -> None:
     dir_path = os.path.dirname(file_path)
     os.makedirs(dir_path, exist_ok=True)
     with open(file_path, "w") as f:
-        f.write(obj.model_dump_json())
+        f.write(obj.model_dump_json(indent=4))
