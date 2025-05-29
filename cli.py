@@ -3,8 +3,9 @@ import uuid
 import typer
 from dotenv import load_dotenv
 from rich.prompt import IntPrompt, Prompt
+
+from src.core import Story, StoryCondition, Student
 from src.feature_flags import FeatureFlags
-from src.story import Story, StoryCondition, Student
 from src.utils import deserialize, serialize
 
 assert load_dotenv()
@@ -65,30 +66,33 @@ def get_student_info():
             name=responses["name"],
             interests=responses["interests"],
             age=responses["age"],
-            scenario_id=scenario_id,
         )
 
         assert isinstance(responses["situation"], str)
         assert isinstance(responses["guidance"], str | None)
         guidance = None if not responses["guidance"] else responses["guidance"]
         story_condition = StoryCondition(
-            scenario_id=scenario_id,
-            student=student,
             situation=responses["situation"],
             guidance=guidance,
         )
 
-        if flags.save_data:
-            serialize(story_condition, f"data/{scenario_id}/story_condition.json")
-
-    else:
-        scenario_id = "3ae4e510-9a0d-4b44-b771-6a20d3bb433d"
-        story_condition = deserialize(
-            f"data/{scenario_id}/story_condition.json",
-            StoryCondition,
+        story = Story(
+            scenario_id=scenario_id,
+            student=student,
+            condition=story_condition,
         )
 
-    print(f"{story_condition=}")
+        if flags.save_data:
+            serialize(story, f"data/{scenario_id}/story.json")
+
+    else:
+        scenario_id = "512e41df-8d8d-4e6f-8f0e-ea3baa751117"
+        story = deserialize(
+            f"data/{scenario_id}/story.json",
+            Story,
+        )
+
+    print(f"{story=}")
 
 
 # get story condition
