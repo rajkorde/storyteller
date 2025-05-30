@@ -8,6 +8,7 @@ You are the director of photography whose job is to create description of how a 
 
 * Return the same number of descriptions as there are key events in the story.
 * You dont need to include all the characters of the story in each scene. Pick the relevant ones only.
+* Do not describe the setting again in the shot description. Just focus on shot composition, lighting, camera angle and other details.
 * The shot descriptions should be cohesive throughout the story. So you cannot have evening shot in one scene and morning shot in another.
 * Include all details needed for a image generator to create images that would be appealing to children.
 """
