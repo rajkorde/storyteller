@@ -2,8 +2,8 @@ from agents import Agent, ModelSettings, Runner
 
 from src.core import Story, StoryCharacteristics
 
-story_developer_prompt = """
-You are a story developer who can read a short story created for children and extract and expand on the following story elements:
+screenplay_writer_prompt = """
+You are a screenplay writer who can read a short story created for children and extract and expand on the following story elements:
 
 * Setting - describe the setting of the story with delightful but concise details. This will help the image creator create a beautiful image for the story.
 * Characters - create a list of the main characters of the story. For each character, you add in delightful details that would strike the fancy of the child and help the image creator to create vivid images of the characters that would accompany the story text.
@@ -12,21 +12,21 @@ You are a story developer who can read a short story created for children and ex
 """
 
 
-story_developer_agent = Agent(
-    name="storyteller",
+screenplay_writer_agent = Agent(
+    name="screenplay_writer",
     model="gpt-4o-mini",
     model_settings=ModelSettings(temperature=0.8),
-    instructions=story_developer_prompt,
+    instructions=screenplay_writer_prompt,
     output_type=StoryCharacteristics,
 )
 
 
-def create_details(story: Story) -> StoryCharacteristics:
-    result = Runner.run_sync(story_developer_agent, input=story.story_text)
+def create_screenplay(story: Story) -> StoryCharacteristics:
+    result = Runner.run_sync(screenplay_writer_agent, input=story.story_text)
 
     if result.new_items[0].raw_item.status != "completed" or not isinstance(
         result.final_output, StoryCharacteristics
     ):
-        raise RuntimeError("Failed to create story details")
+        raise RuntimeError("Failed to create screenplay")
 
     return result.final_output
