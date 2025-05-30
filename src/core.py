@@ -14,14 +14,24 @@ class StoryCondition(BaseModel):
     guidance: str | None = None
 
 
+class Character(BaseModel):
+    name: str
+    description: str
+
+
+class StoryCharacteristics(BaseModel):
+    story_setting: str
+    characters: list[Character]
+    key_events: list[str]
+
+
 class Story(BaseModel):
     STORY_LIMIT: ClassVar[int] = 250
 
     scenario_id: str
     student: Student
     condition: StoryCondition
-    setting: str = ""
     story_text: str = ""
 
-    characters: list[str] = Field(default_factory=list)
-    key_events: list[str] = Field(default_factory=list)
+    characteristics: StoryCharacteristics | None = None
+    key_events_details: list[str] = Field(default_factory=list)
