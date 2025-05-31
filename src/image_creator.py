@@ -111,6 +111,9 @@ You are an expert in creating appealing images for children's books. You will be
                 if output.type == "image_generation_call"
             ]
 
+            image_path = f"data/{self.story.scenario_id}/images"
+            Path(image_path).mkdir(parents=True, exist_ok=True)
+
             if image_data:
                 image_base64 = image_data[0]
 
