@@ -16,7 +16,8 @@ class ImageCreator:
     character_sheet_creator_prompt = """
 You are an expert in creating images for children's books. You will be provided with a children's story, the setting of the story and a list of characters in the story. Your job is to create an character sheet image that contain the characters in the setting provided. The character sheet image would be used as a reference to create consistent characters in creating for various scenes of the story.
 
-* Do NOT include any text in the image.
+* Include the name of the character in each shot of the sheet.
+* Don't make the image too warm.
 * Each character shot should be a full body shot.
 * The sheet should be a single image, but include shots of the characters in front and side profile.
 * The shots of same character should be consistent in every way.
