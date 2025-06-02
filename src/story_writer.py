@@ -26,6 +26,7 @@ story_writer_agent = Agent(
 
 
 def create_story(story: Story) -> str:
+    print("Creating Story...")
     input = f"""
     Situation: {story.condition.situation}, 
     Age: {story.student.age}, 

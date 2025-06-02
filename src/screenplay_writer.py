@@ -22,6 +22,7 @@ screenplay_writer_agent = Agent(
 
 
 def create_screenplay(story: Story) -> StoryCharacteristics:
+    print("Creating Screenplay...")
     result = Runner.run_sync(screenplay_writer_agent, input=story.story_text)
 
     if result.new_items[0].raw_item.status != "completed" or not isinstance(
