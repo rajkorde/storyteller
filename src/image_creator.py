@@ -1,7 +1,9 @@
+import asyncio
 import base64
 from pathlib import Path
 
-from openai import OpenAI
+from loguru import logger
+from openai import AsyncOpenAI
 from openai.types.responses.response import Response
 from tenacity import (
     retry,
@@ -34,18 +36,18 @@ You are an expert in creating appealing images for children's books. You will be
 
     def __init__(self, story: Story):
         self.story = story
-        self.client = OpenAI()
+        self.client = AsyncOpenAI()
         self.character_sheet_response_id: str | None = None
 
     @retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(3))
-    def _image_completion_with_backoff(
+    async def _image_completion_with_backoff(
         self,
         prompt: str,
         input: str,
         previous_id: str | None = None,
         quality: str = "medium",
     ) -> Response:
-        response = self.client.responses.create(
+        response = await self.client.responses.create(
             model="gpt-4o-mini",
             instructions=prompt,
             previous_response_id=previous_id,
@@ -60,7 +62,7 @@ You are an expert in creating appealing images for children's books. You will be
         )
         return response
 
-    def create_character_sheet(self):
+    async def create_character_sheet(self):
         print("Generating character sheet")
 
         input = f"""
@@ -69,7 +71,7 @@ You are an expert in creating appealing images for children's books. You will be
         Characters: {self.story.characteristics.characters}, \n\n
         """
 
-        character_sheet_response = self._image_completion_with_backoff(
+        character_sheet_response = await self._image_completion_with_backoff(
             ImageCreator.character_sheet_creator_prompt, input, quality="high"
         )
         self.character_sheet_response_id = character_sheet_response.id
@@ -88,10 +90,11 @@ You are an expert in creating appealing images for children's books. You will be
             with open(f"{image_path}/character_sheet.png", "wb") as f:
                 f.write(base64.b64decode(image_base64))
 
-    def create_scene_images(self):
+    async def create_scene_images(self):
         assert self.character_sheet_response_id, (
             "Must create character sheet before creating scene images"
         )
+        tasks = []
         for i, scene_description in enumerate(self.story.key_events_details):
             print(f"Generating scene {i + 1}")
 
@@ -101,11 +104,20 @@ You are an expert in creating appealing images for children's books. You will be
             Scene Description: {scene_description}, \n\n
             """
 
-            response = self._image_completion_with_backoff(
-                ImageCreator.image_generator_prompt,
-                input,
-                self.character_sheet_response_id,
+            tasks.append(
+                self._image_completion_with_backoff(
+                    ImageCreator.image_generator_prompt,
+                    input,
+                    self.character_sheet_response_id,
+                )
             )
+
+        responses = await asyncio.gather(*tasks, return_exceptions=True)
+
+        for i, response in enumerate(responses):
+            if isinstance(response, Exception):
+                logger.error(f"Failed to create scene {i + 1}: {response}")
+                continue
 
             image_data = [
                 output.result
