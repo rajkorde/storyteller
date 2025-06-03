@@ -1,3 +1,5 @@
+import asyncio
+
 from agents import Agent, ModelSettings, Runner
 
 from src.core import Story
@@ -41,7 +43,12 @@ def publish_html(story: Story):
         input += f"Scene {scene_id}: {scene}\n"
         input += f"Image URL: {url}\n\n"
 
-    result = Runner.run_sync(publisher_agent, input=input)
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        result = Runner.run_sync(publisher_agent, input=input)
+    finally:
+        loop.close()
 
     if result.new_items[0].raw_item.status != "completed" or not isinstance(
         result.final_output, str

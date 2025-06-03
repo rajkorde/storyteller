@@ -1,4 +1,9 @@
 {
-  "get_story_situation": true,
+  "get_user_input": true,
+  "create_story": true,
+  "create_screenplay": true,
+  "create_scene_descriptions": true,
+  "create_images": true,
+  "publish": true,
   "save_data": true
 }

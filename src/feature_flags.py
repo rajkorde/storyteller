@@ -6,7 +6,12 @@ from pydantic import BaseModel
 
 
 class FeatureFlags(BaseModel):
-    get_story_situation: bool
+    get_user_input: bool
+    create_story: bool
+    create_screenplay: bool
+    create_scene_descriptions: bool
+    create_images: bool
+    publish: bool
     save_data: bool
 
     @classmethod

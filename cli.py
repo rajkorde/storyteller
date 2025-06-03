@@ -1,11 +1,18 @@
+import asyncio
 import uuid
 
 import typer
 from dotenv import load_dotenv
+from loguru import logger
 from rich.prompt import IntPrompt, Prompt
 
 from src.core import Story, StoryCondition, Student
 from src.feature_flags import FeatureFlags
+from src.image_creator import ImageCreator
+from src.photographer import SceneDescription, create_scene_descriptions
+from src.publisher import publish_html
+from src.screenplay_writer import create_screenplay
+from src.story_writer import create_story
 from src.utils import deserialize, serialize
 
 assert load_dotenv()
@@ -14,6 +21,61 @@ __version__ = "0.0.1"
 
 app = typer.Typer()
 flags = FeatureFlags.read_feature_flags()
+
+
+def fill_in_details(story: Story):
+    # create story
+    story_id = story.scenario_id
+
+    if flags.create_story:
+        story_text = create_story(story)
+        if story_text:
+            story.story_text = story_text
+            serialize(story, f"data/{story_id}/story.json")
+    else:
+        story_text = story.story_text
+
+    if not story_text:
+        logger.error("Failed to create story")
+        raise typer.Exit(1)
+
+    # create screenplay
+    if flags.create_screenplay:
+        details = create_screenplay(story)
+        if details:
+            story.characteristics = details
+            serialize(story, f"data/{story_id}/story.json")
+    else:
+        details = story.characteristics
+
+    if not details:
+        logger.error("Failed to create screenplay")
+        raise typer.Exit(1)
+
+    # create image descriptions
+    if flags.create_scene_descriptions:
+        scene_descriptions = create_scene_descriptions(story)
+        if scene_descriptions and scene_descriptions.descriptions:
+            story.key_events_details = scene_descriptions.descriptions
+            serialize(story, f"data/{story_id}/story.json")
+    else:
+        scene_descriptions = SceneDescription()
+    scene_descriptions.descriptions = story.key_events_details
+
+    if not scene_descriptions or not scene_descriptions.descriptions:
+        logger.error("Failed to create scene descriptions")
+        raise typer.Exit(1)
+
+    # create images
+    if flags.create_images:
+        image_creator = ImageCreator(story)
+        asyncio.run(image_creator.create_character_sheet())
+        asyncio.run(image_creator.create_scene_images())
+
+    # Publish
+
+    if flags.publish:
+        publish_html(story=story)
 
 
 def version_callback(value: bool):
@@ -48,19 +110,16 @@ def ask_student_questions() -> dict[str, str | int]:
 
 
 @app.command()
-def get_student_info():
-    if flags.get_story_situation:
+def get_student_info(scenario_id: str | None = typer.Argument(None)):
+    if flags.get_user_input:
         print_header()
         responses = ask_student_questions()
-
-        typer.secho("\nYour responses:", fg=typer.colors.CYAN, bold=True)
-        for key, value in responses.items():
-            typer.echo(f"{key.capitalize()}: {value}")
 
         assert isinstance(responses["interests"], str)
         assert isinstance(responses["age"], int)
 
         scenario_id = str(uuid.uuid4())
+        print(f"Scenario ID created: {scenario_id}")
         student = Student(
             interests=responses["interests"],
             age=responses["age"],
@@ -84,19 +143,23 @@ def get_student_info():
             serialize(story, f"data/{scenario_id}/story.json")
 
     else:
-        scenario_id = "512e41df-8d8d-4e6f-8f0e-ea3baa751117"
-        story = deserialize(
-            f"data/{scenario_id}/story.json",
-            Story,
-        )
+        if not scenario_id:
+            print(
+                "You must provide a scenario id if feature flag for getting user input is off."
+            )
+            raise typer.Exit(code=1)
+        try:
+            story = deserialize(
+                f"data/{scenario_id}/story.json",
+                Story,
+            )
+        except RuntimeError:
+            print(f"Invalid scenario id: {scenario_id}")
+            raise typer.Exit(code=1)
 
-    print(f"{story=}")
+    # print(f"{story=}")
 
-
-# get story condition
-
-
-# get story
+    fill_in_details(story)
 
 
 if __name__ == "__main__":

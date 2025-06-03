@@ -1,5 +1,5 @@
 from agents import Agent, ModelSettings, Runner
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from src.core import Story
 
@@ -15,7 +15,7 @@ You are the director of photography whose job is to create description of how a 
 
 
 class SceneDescription(BaseModel):
-    descriptions: list[str]
+    descriptions: list[str] = Field(default_factory=list)
 
 
 photographer_agent = Agent(
