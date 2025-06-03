@@ -32,12 +32,12 @@ def print_header():
 def ask_student_questions() -> dict[str, str | int]:
     answers: dict[str, str | int] = {}
     try:
-        answers["name"] = Prompt.ask("What is the name of the student?")
         answers["age"] = IntPrompt.ask("What is their age?")
-        answers["interests"] = Prompt.ask("What are their interests?")
         answers["situation"] = Prompt.ask(
             "What is student situation that needs correcting?"
         )
+        answers["interests"] = Prompt.ask("What are their interests or hobbies?")
+
         answers["guidance"] = Prompt.ask(
             "Any guidance for the story (eg use forest setting, use bright colors etc)? Hit enter for none"
         )
@@ -57,13 +57,11 @@ def get_student_info():
         for key, value in responses.items():
             typer.echo(f"{key.capitalize()}: {value}")
 
-        assert isinstance(responses["name"], str)
         assert isinstance(responses["interests"], str)
         assert isinstance(responses["age"], int)
 
         scenario_id = str(uuid.uuid4())
         student = Student(
-            name=responses["name"],
             interests=responses["interests"],
             age=responses["age"],
         )

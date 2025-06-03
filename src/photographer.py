@@ -28,7 +28,7 @@ photographer_agent = Agent(
 
 
 def create_scene_descriptions(story: Story) -> SceneDescription:
-    print("Creating scene descriptions...")
+    print("Creating Scene descriptions...")
     input = f"""
     Story: {story.story_text}, \n\n
     Setting: {story.characteristics.story_setting}, \n\n

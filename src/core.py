@@ -4,7 +4,6 @@ from pydantic import BaseModel, Field
 
 
 class Student(BaseModel):
-    name: str
     interests: str
     age: int
 
