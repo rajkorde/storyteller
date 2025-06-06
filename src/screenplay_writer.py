@@ -1,4 +1,5 @@
 from agents import Agent, ModelSettings, Runner
+import asyncio
 
 from src.core import Story, StoryCharacteristics
 
@@ -23,7 +24,12 @@ screenplay_writer_agent = Agent(
 
 def create_screenplay(story: Story) -> StoryCharacteristics:
     print("Creating Screenplay...")
-    result = Runner.run_sync(screenplay_writer_agent, input=story.story_text)
+    result = asyncio.run(
+        Runner.run(
+            screenplay_writer_agent,
+            input=story.story_text,
+        )
+    )
 
     if result.new_items[0].raw_item.status != "completed" or not isinstance(
         result.final_output, StoryCharacteristics

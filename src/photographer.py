@@ -1,5 +1,6 @@
 from agents import Agent, ModelSettings, Runner
 from pydantic import BaseModel, Field
+import asyncio
 
 from src.core import Story
 
@@ -35,7 +36,12 @@ def create_scene_descriptions(story: Story) -> SceneDescription:
     Characters: {story.characteristics.characters}, \n\n
     Key Events: {story.characteristics.key_events}"""
 
-    result = Runner.run_sync(photographer_agent, input=input)
+    result = asyncio.run(
+        Runner.run(
+            photographer_agent,
+            input=input,
+        )
+    )
 
     if result.new_items[0].raw_item.status != "completed" or not isinstance(
         result.final_output, SceneDescription
