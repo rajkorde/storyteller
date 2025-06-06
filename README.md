@@ -39,6 +39,14 @@ uv pip install .
 uv run cli.py
 ```
 
+### API Server
+
+An HTTP API is also available to programmatically create stories.
+
+```bash
+uvicorn src.api:app --reload
+```
+
 ## Target Audience
 
 - **Special Education Teachers**: Primary users who create stories for their students
