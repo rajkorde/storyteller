@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Storyteller</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; }
+    label { display: block; margin-top: 10px; }
+    input, textarea { width: 100%; padding: 6px; margin-top: 4px; }
+    button { margin-top: 12px; padding: 8px 16px; }
+  </style>
+</head>
+<body>
+<h1>Create a Story</h1>
+<form id="storyForm">
+  <label>Age
+    <input type="number" id="age" required>
+  </label>
+  <label>Interests
+    <input type="text" id="interests" required>
+  </label>
+  <label>Situation
+    <textarea id="situation" required></textarea>
+  </label>
+  <label>Guidance
+    <input type="text" id="guidance">
+  </label>
+  <button type="submit">Create Story</button>
+</form>
+<button id="viewStory" style="display:none;">View Story</button>
+<script>
+  const form = document.getElementById('storyForm');
+  const viewBtn = document.getElementById('viewStory');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    viewBtn.style.display = 'none';
+    const payload = {
+      age: Number(document.getElementById('age').value),
+      interests: document.getElementById('interests').value,
+      situation: document.getElementById('situation').value,
+      guidance: document.getElementById('guidance').value
+    };
+    const res = await fetch('/story', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      alert(err.detail || 'Error creating story');
+      return;
+    }
+    const data = await res.json();
+    const url = `/story/html/${data.scenario_id}`;
+    viewBtn.onclick = () => window.open(url, '_blank');
+    viewBtn.style.display = 'inline-block';
+  });
+</script>
+</body>
+</html>
