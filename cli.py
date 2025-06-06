@@ -126,7 +126,7 @@ def get_student_info(scenario_id: str | None = typer.Argument(None)):
         )
 
         assert isinstance(responses["situation"], str)
-        assert isinstance(responses["guidance"], str | None)
+        assert responses["guidance"] is None or isinstance(responses["guidance"], str)
         guidance = None if not responses["guidance"] else responses["guidance"]
         story_condition = StoryCondition(
             situation=responses["situation"],
