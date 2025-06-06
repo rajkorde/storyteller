@@ -47,7 +47,7 @@ An HTTP API is also available to programmatically create stories.
 uvicorn src.api:app --reload
 ```
 
-The API also serves a small web interface at `/` where you can enter story details.
+The API also serves a modern web interface at `/` built with TypeScript and Tailwind where you can enter story details.
 
 ### Docker
 
@@ -58,7 +58,7 @@ docker build -t storyteller .
 docker run -p 8000:8000 storyteller
 ```
 
-Then open `http://localhost:8000` to use the frontend.
+Then open `http://localhost:8000` to use the responsive frontend.
 
 ## Target Audience
 
