@@ -1,4 +1,5 @@
 from agents import Agent, ModelSettings, Runner
+import asyncio
 
 from src.core import Story
 
@@ -33,7 +34,12 @@ def create_story(story: Story) -> str:
     Interests: {story.student.interests}, 
     Guidance: {story.condition.guidance}"""
 
-    result = Runner.run_sync(story_writer_agent, input=input)
+    result = asyncio.run(
+        Runner.run(
+            story_writer_agent,
+            input=input,
+        )
+    )
 
     return (
         result.final_output

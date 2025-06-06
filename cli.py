@@ -15,7 +15,7 @@ from src.screenplay_writer import create_screenplay
 from src.story_writer import create_story
 from src.utils import deserialize, serialize
 
-assert load_dotenv()
+load_dotenv()
 
 __version__ = "0.0.1"
 
