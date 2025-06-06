@@ -9,11 +9,11 @@ I have a children's story and few images that illustrate different scenes from t
 
 You will be provided the story and list of image url and scene descriptions of the scene they represent.
 
-The image tags for the scence should be placed right AFTER the relevent story section it represents on a new line.
+The image tags for the scene should be placed right AFTER the relevent story section it represents on a new line.
 Use colorful font for title only.
 Use larger font size for the story. Something that is appropriate for kids.
 Use clear, readable formatting.
-The story should only be in the middle demarcated section with white gutters (about 50% of the port width). 
+The story should only be in the middle demarcated section with white gutters (about 50% of the viewport width).
 All images should be resized to 40% of their size.
 Use child friendly colors and fonts.
 But dont use comic sans.
