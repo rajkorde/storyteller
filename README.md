@@ -47,6 +47,19 @@ An HTTP API is also available to programmatically create stories.
 uvicorn src.api:app --reload
 ```
 
+The API also serves a small web interface at `/` where you can enter story details.
+
+### Docker
+
+To run on platforms like Railway using Docker:
+
+```bash
+docker build -t storyteller .
+docker run -p 8000:8000 storyteller
+```
+
+Then open `http://localhost:8000` to use the frontend.
+
 ## Target Audience
 
 - **Special Education Teachers**: Primary users who create stories for their students
